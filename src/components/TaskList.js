@@ -181,15 +181,23 @@ export default function Page() {
               fullWidth
               variant='contained'
               color='primary'
-              onClick={() =>
+              onClick={() => {
+                if (!task.trim() || !/[a-zA-Z]/.test(task)) {
+                  alert('Please enter a valid task.');
+                  return;
+                }
+                if (!dueDate) {
+                  alert('Please select a due date.');
+                  return;
+                }
                 addTaskMutation.mutate({
                   text: task,
                   priority,
                   status,
                   dueDate,
                   uid: user.uid,
-                })
-              }
+                });
+              }}
             >
               Add Task
             </Button>
@@ -224,7 +232,7 @@ export default function Page() {
                         ? 'green'
                         : t.status === 'In Progress'
                         ? 'orange'
-                        : 'inherit', 
+                        : 'inherit',
                   }}
                 >
                   {t.status}

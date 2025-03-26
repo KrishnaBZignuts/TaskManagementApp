@@ -17,9 +17,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [credentials, setCredentials] = useState({ email: '', password: '' });
-
   const router = useRouter();
-
   const handleClickShowPassword = () => setIsPasswordShown((prev) => !prev);
 
   const handleChange = (e) => {
@@ -35,7 +33,6 @@ const LoginPage = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
       const user = userCredential.user;
-
       const userRef = doc(userCollection, user.uid);
       const userSnap = await getDoc(userRef);
 
