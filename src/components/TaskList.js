@@ -46,7 +46,10 @@ export default function Page() {
       if (!user) return [];
       const q = query(tasksCollection, where('uid', '==', user.uid));
       const querySnapshot = await getDocs(q);
-      const taskList = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const taskList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       setTasks(taskList);
       return taskList;
     },
@@ -106,38 +109,88 @@ export default function Page() {
       >
         <Logout /> Logout
       </Button>
-      <Typography variant='h4' align='center' gutterBottom sx={{ color: 'black' }}>
+      <Typography
+        variant='h4'
+        align='center'
+        gutterBottom
+        sx={{ color: 'black' }}
+      >
         Task Management App
       </Typography>
 
       <Grid container spacing={2} alignItems='center' sx={{ mb: 2 }}>
         <Grid item xs={12} sm={4}>
-          <TextField fullWidth label='Task' variant='outlined' value={task} onChange={(e) => setTask(e.target.value)} />
+          <TextField
+            fullWidth
+            label='Task'
+            variant='outlined'
+            value={task}
+            onChange={(e) => setTask(e.target.value)}
+          />
         </Grid>
         <Grid item xs={6} sm={2}>
-          <Select fullWidth value={priority} onChange={(e) => setPriority(e.target.value)}>
+          <Select
+            fullWidth
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+          >
             <MenuItem value='Low'>Low</MenuItem>
             <MenuItem value='Medium'>Medium</MenuItem>
             <MenuItem value='High'>High</MenuItem>
           </Select>
         </Grid>
         <Grid item xs={6} sm={2}>
-          <Select fullWidth value={status} onChange={(e) => setStatus(e.target.value)}>
+          <Select
+            fullWidth
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
             <MenuItem value='To Do'>To Do</MenuItem>
             <MenuItem value='In Progress'>In Progress</MenuItem>
             <MenuItem value='Completed'>Completed</MenuItem>
           </Select>
         </Grid>
         <Grid item xs={12} sm={2}>
-          <TextField fullWidth type='date' variant='outlined' value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+          <TextField
+            fullWidth
+            type='date'
+            variant='outlined'
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+          />
         </Grid>
         <Grid item xs={12} sm={2}>
           {editTaskId ? (
-            <Button fullWidth variant='contained' color='secondary' onClick={() => updateTaskMutation.mutate({ text: task, priority, status, dueDate })}>
+            <Button
+              fullWidth
+              variant='contained'
+              color='secondary'
+              onClick={() =>
+                updateTaskMutation.mutate({
+                  text: task,
+                  priority,
+                  status,
+                  dueDate,
+                })
+              }
+            >
               Update Task
             </Button>
           ) : (
-            <Button fullWidth variant='contained' color='primary' onClick={() => addTaskMutation.mutate({ text: task, priority, status, dueDate, uid: user.uid })}>
+            <Button
+              fullWidth
+              variant='contained'
+              color='primary'
+              onClick={() =>
+                addTaskMutation.mutate({
+                  text: task,
+                  priority,
+                  status,
+                  dueDate,
+                  uid: user.uid,
+                })
+              }
+            >
               Add Task
             </Button>
           )}
@@ -148,16 +201,47 @@ export default function Page() {
         <Reorder.Group axis='y' values={tasks} onReorder={setTasks}>
           {tasks.map((t) => (
             <Reorder.Item key={t.id} value={t} whileDrag={{ scale: 1.05 }}>
-              <Grid container alignItems='center' spacing={2} sx={{ mb: 1, p: 1, bgcolor: 'grey.100', borderRadius: 2 }}>
-                <Grid item xs={4}>{t.text}</Grid>
-                <Grid item xs={2}>{t.priority}</Grid>
-                <Grid item xs={2}>{t.dueDate || 'No date'}</Grid>
-                <Grid item xs={2}>{t.status}</Grid>
+              <Grid
+                container
+                alignItems='center'
+                spacing={2}
+                sx={{ mb: 1, p: 1, bgcolor: 'grey.100', borderRadius: 2 }}
+              >
+                <Grid item xs={4}>
+                  {t.text}
+                </Grid>
+                <Grid item xs={2}>
+                  {t.priority}
+                </Grid>
+                <Grid
+                  item
+                  xs={2}
+                  sx={{
+                    color:
+                      t.status === 'To Do'
+                        ? 'red'
+                        : t.status === 'Completed'
+                        ? 'green'
+                        : t.status === 'In Progress'
+                        ? 'orange'
+                        : 'inherit', 
+                  }}
+                >
+                  {t.status}
+                </Grid>
+
+                <Grid item xs={2}>
+                  {t.dueDate || 'No date'}
+                </Grid>
+
                 <Grid item xs={2}>
                   <IconButton color='secondary' onClick={() => handleEdit(t)}>
                     <Edit />
                   </IconButton>
-                  <IconButton color='error' onClick={() => deleteTaskMutation.mutate(t.id)}>
+                  <IconButton
+                    color='error'
+                    onClick={() => deleteTaskMutation.mutate(t.id)}
+                  >
                     <Delete />
                   </IconButton>
                 </Grid>
